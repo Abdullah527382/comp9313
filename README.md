@@ -1,4 +1,4 @@
-Install java 11 resources (for wsl) from local website download:
+# Install java 11 resources (for wsl) from local website download:
 
 Solved my last problem:
 
@@ -54,3 +54,59 @@ cd into your local Downloads dir and cp the tar.gz file
 Sources:
 Main: https://phoenixnap.com/kb/how-to-install-java-ubuntu
 https://www.linuxuprising.com/2019/06/new-oracle-java-11-installer-for-ubuntu.html
+
+# Get HADOOP working:
+
+Follow the guide: https://webcms3.cse.unsw.edu.au/static/uploads/course/COMP9313/22T2/52663a121dc657d694c185569ddb6982f6d6a7394f3e5abcf151581f6617830b/Lab_1.pdf
+
+Make sure you add the code snippets between the <configuration><configuration/> tags
+
+Make sure the ssh server is running AND check that it is installed with:
+`sudo apt list --installed | grep openssh-server`
+Check if running:
+`sudo service ssh status`
+If you get an error or some response like:
+` * sshd is not running`
+Run the service:
+` sudo service ssh start`
+
+If you get the error like here: https://stackoverflow.com/questions/68077905/getting-error-permission-denied-publickey-password-after-start-dfs-sh:
+Please run the commands:
+
+```
+sudo apt install ssh
+# Only run below command if you are fine with overriding/don't have a RSA key
+# ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+chmod 0600 ~/.ssh/authorized_keys
+```
+
+Run `jps` to make sure Hadoop has started correctly
+
+### Check the HADOOP server health, visit link:
+
+`http://localhost:9870/dfshealth.html#tab-overview`
+
+### MapReduce:
+
+Check out some commands by running:
+`hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.2.jar`
+
+#### Examples:
+
+1. An example command which runs estimation of Pi with 16 maps and 10,000 samples:
+   `hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.2.jar pi 16 10000`
+
+2. Search for all the strings starting with ‘dfs’ in the xml files
+   `hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.2.jar grep /user/comp9313/input /user/comp9313/output 'dfs[a-z.]+'`
+
+   - Copy output files from DFS to local filesystem with command:
+     ` hdfs dfs -get /user/comp9313/output output`
+   - Check files
+     `cat output/*`
+     ...
+
+3. `hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.2.jar wordcount <input_file> <output_file>`
+   - Will need to delete our output file first, run ` hdfs dfs -rm output/*` and then `hdfs dfs -rmdir output` OR `hdfs dfs -rm -r output`
+
+### YARN:

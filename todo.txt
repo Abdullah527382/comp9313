@@ -1,0 +1,27 @@
+https://webcms3.cse.unsw.edu.au/static/uploads/course/COMP9313/22T2/52663a121dc657d694c185569ddb6982f6d6a7394f3e5abcf151581f6617830b/Lab_1.pdf 
+
+the xml files have incorrectly been changed, fix this please
+
+Make sure the ssh server is running AND check that it is installed with:
+`sudo apt list --installed | grep openssh-server`
+Check if running:
+`sudo service ssh status`
+If you get an error or some response like: 
+` * sshd is not running`
+Run the service:
+` sudo service ssh start`
+
+If you get the error like here: https://stackoverflow.com/questions/68077905/getting-error-permission-denied-publickey-password-after-start-dfs-sh:
+Please run the commands:
+
+```
+sudo apt install ssh
+# Only run below command if you are fine with overriding/don't have a RSA key
+# ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+chmod 0600 ~/.ssh/authorized_keys
+```
+### Check the HADOOP server health, visit link:
+`http://localhost:9870/dfshealth.html#tab-overview`
+
+
