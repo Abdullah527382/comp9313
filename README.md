@@ -81,6 +81,8 @@ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 chmod 0600 ~/.ssh/authorized_keys
 ```
 
+`start-dfs.sh and stop-dfs.sh` will run and stop hdfs
+
 Run `jps` to make sure Hadoop has started correctly
 
 ### Check the HADOOP server health, visit link:
