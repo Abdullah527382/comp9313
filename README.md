@@ -61,6 +61,8 @@ Follow the guide: https://webcms3.cse.unsw.edu.au/static/uploads/course/COMP9313
 
 Make sure you add the code snippets between the <configuration><configuration/> tags
 
+# !!! IMPORTANT !!!
+
 Make sure the ssh server is running AND check that it is installed with:
 `sudo apt list --installed | grep openssh-server`
 Check if running:
