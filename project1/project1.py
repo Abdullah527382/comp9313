@@ -6,6 +6,7 @@ class count(MRJob):
         Splits the line and generates a word's count, e.g. <count> '<word>'
     """
     def mapper(self, _, line):
+        # 
         for word in line.split():
             yield(word, 1)
     

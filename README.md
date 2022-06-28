@@ -113,4 +113,28 @@ Check out some commands by running:
 3. `hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.2.jar wordcount <input_file> <output_file>`
    - Will need to delete our output file first, run ` hdfs dfs -rm output/*` and then `hdfs dfs -rmdir output` OR `hdfs dfs -rm -r output`
 
+## SET THE ENV VARS:
+```
+export HDFS_NAMENODE_USER="root"
+export HDFS_DATANODE_USER="root"
+export HDFS_SECONDARYNAMENODE_USER="root"
+export YARN_RESOURCEMANAGER_USER="root"
+export YARN_NODEMANAGER_USER="root"
+```
+
 ### YARN:
+
+## Using MRJob =:
+
+Commands which are helpful. 
+Create a file e.g. called mydata.txt with a bunch of lines which contains words
+
+
+```
+# Create a directory to contain input data
+hdfs dfs -mkdir hdfs://localhost:9000/user/comp9313/input
+# Move the local data file to the dfs 
+hdfs dfs -put mydata.txt hdfs://localhost:9000/user/comp9313/input/
+# Run the wordcount project on that input data with -r hadoop specified
+python3 wordcount.py -r hadoop hdfs://localhost:9000/user/comp9313/input/mydata.txt
+```
