@@ -58,8 +58,8 @@ Given the data source:
 20211224,online shopping rise due coronavirus
 20211229,china close encounters elon musks
 
-1. Find the TF-IDF for woman given the data source: 
-2. Find the TF-IDF for shopping given the data source: 
+1. Find the TF-IDF for 'woman' given the data source: 
+2. Find the TF-IDF for 'shopping' given the data source: 
 
 ```
 1. 
