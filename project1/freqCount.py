@@ -15,7 +15,7 @@ class MRWordFreqCount(MRJob):
             self.words[word] = self.words[word] + 1
 
     def final_get_words(self):
-        for word, val in self.words.iteritems():
+        for word, val in self.words.items():
             yield word, val
 
     def sum_words(self, word, counts):

@@ -149,3 +149,6 @@ hdfs dfs -put mydata.txt hdfs://localhost:9000/user/comp9313/input/
 # Run the wordcount project on that input data with -r hadoop specified
 python3 wordcount.py -r hadoop hdfs://localhost:9000/user/comp9313/input/mydata.txt
 ```
+
+## Submitting stuff:
+cp z5207998_proj1.zip ~/../mnt/c/Users/admin/Desktop/comp9313/

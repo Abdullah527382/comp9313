@@ -6,13 +6,15 @@ from mrjob.job import MRJob
 from mrjob.step import MRStep
 from mrjob.compat import jobconf_from_env
 
+from math import log10
 # Regex to actually match on words
 WORD_RE = re.compile(r"[\w']+")
-NUM_YEARS = jobconf_from_env('myjob.settings.years')
+NUM_YEARS = 3 #jobconf_from_env('myjob.settings.years')
 
 class MRCalculateTFIDF(MRJob):
 
-    wordFreqList = {}
+    # def init_final_result(self):
+    #     self.finalResult = {}
 
     def wordsFromLines(self, _, line):
         year = line[:4]
@@ -20,6 +22,8 @@ class MRCalculateTFIDF(MRJob):
         line = WORD_RE.findall(line)
         for word in line:
             word = word.lower()
+            # self.finalResult.setdefault(word, "")
+            # self.finalResult[word] = ""
             yield (word, year), 1
     
     # ((word, year), N)
@@ -35,44 +39,55 @@ class MRCalculateTFIDF(MRJob):
         year = value[1]
         freq = freq
        # yield (word, year), freq
-        yield word, (year, freq, 1)
-
-    # Compute the num count of words overall
-    # def overallNumWords(self, year, words_freq):
-    #     wordList = []
-    #     freqList = []
-    #     # For each of the word_freq objects in words_freq (i.e. (word, freq))
-    #     for word_freq in words_freq:
-    #         # Get the word and freq and append to local state
-    #         word = word_freq[0]
-    #         freq = word_freq[1]
-    #         wordList.append(word)
-    #         freqList.append(freq)
-
-    #     # # Loop through the lists and create a new list with totalCounts
-    #     # wordFreqList = dict(zip(wordList,freqList))
-    #     # sys.stdout.write(json.dumps(wordFreqList).encode())
-    #     # Go through our lists and grab the relevant information
-    #     listLength = len(wordList)
-    #     for counter in range(listLength):
-    #         yield(wordList[counter], year),(freqList[counter]) 
+        yield word, (year, freq, 1, word)
 
     # (word, year), (tf, yearNum)
     def yearOccurence(self, word, year_freqs):
         yearList = []
         freqList = []
+        wordList = []
         numOfYears = 0
         for year_freq in year_freqs:
             numOfYears += 1
             year = year_freq[0]
             freq = year_freq[1]
+            currWord = year_freq[3]
             yearList.append(year)
             freqList.append(freq)
+            wordList.append(currWord)
         
         listLength = len(yearList)
+        # combinedList = []
         for counter in range(listLength):
-            yield(word, yearList[counter]),(freqList[counter], numOfYears, NUM_YEARS)        
+            # i = i + 1
+            # if counter >= 0 and counter in range(listLength + 1):
+            #     currWord = wordList[counter]
+            #     if currWord == wordList[counter - 1] and counter != 0:
+            #         # Check if list contains dict
+            #         for item in combinedList:
+            #             if currWord in item:
+            #                 item[currWord].append
+            #         formattedDict = {}
+            #         formattedDict['word'] = currWord
+                yield(word, yearList[counter]),( freqList[counter], numOfYears, int(NUM_YEARS))        
 
+    # Calculate TFIDF given the prev values
+    def calcTfIdf (self, word_year, freq_nums):
+        # word_year object 
+        word = word_year[0]
+        year = word_year[1]
+        # freq_nums object
+        freq = freq_nums[0]
+        wordYearCount = freq_nums[1]
+        numOfYears = freq_nums[2]
+        # Calculate the TF-IDF 
+        tfIdf = freq * log10(numOfYears/wordYearCount)
+        # yield(word, year),(freq, numOfYears, numOfYears)
+        # self.finalResult[f"{word}"] += f"{year},{tfIdf}"
+        yield (word), (year, tfIdf)
+
+    def formatOutput(self, word, value):
+        yield (word, value)
 
     def steps(self):
         return [
@@ -82,8 +97,15 @@ class MRCalculateTFIDF(MRJob):
                 reducer=self.TFByYear
             ), 
             MRStep(
-               mapper=self.getYearsAndTF, 
-               reducer=self.yearOccurence
+                mapper=self.getYearsAndTF, 
+                reducer=self.yearOccurence
+            ), 
+            MRStep (
+                mapper=self.calcTfIdf,
+
+            ), 
+            MRStep (
+                mapper=self.formatOutput,
             )
         ]
 if __name__ == '__main__':
