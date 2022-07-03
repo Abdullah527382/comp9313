@@ -9,12 +9,12 @@ from mrjob.compat import jobconf_from_env
 from math import log10
 # Regex to actually match on words
 WORD_RE = re.compile(r"[\w']+")
-NUM_YEARS = 3 #jobconf_from_env('myjob.settings.years')
+NUM_YEARS = jobconf_from_env('myjob.settings.years')
 
 class MRCalculateTFIDF(MRJob):
 
-    # def init_final_result(self):
-    #     self.finalResult = {}
+    MRJob.SORT_VALUES = True
+
 
     def wordsFromLines(self, _, line):
         year = line[:4]
@@ -25,13 +25,6 @@ class MRCalculateTFIDF(MRJob):
         for word in lines:
             yield word+","+str(year), 1
             yield word+",*",1
-        # for i in range(0, len(line)):
-        #     if len(line[i]):           
-        #         for j in range(i+1, len(line)):
-        #             if len(line[j]):
-        #                 yield line[i]+","+str(year), 1
-        #                 yield line[i]+",*", 1
-
 
     # ((word, year), N)
     def TFByYear(self, key, count):
@@ -41,19 +34,14 @@ class MRCalculateTFIDF(MRJob):
     def reducer_init(self):
         self.marginal = 0
 
+    # (year, (word, N))
     def reducer(self, key, values):        
         wi, wj = key.split(",", 1)
         if wj=="*":
             self.marginal = sum(values)
         else:
             count = sum(values)
-            yield wi,(wj, count, self.marginal)
-
-    # (year, (word, N))
-    # def getYearsAndTF(self, key, freq):
-    #     word, year = key.split(",", 1)
-    #         # yield (word, year), freq
-    #     yield word, (year, freq)
+            yield wi,(wj, count)
 
     # (word, year), (tf, yearNum)
     def yearOccurence(self, word, year_freqs):
@@ -69,7 +57,7 @@ class MRCalculateTFIDF(MRJob):
         
         listLength = len(yearList)
         for counter in range(listLength):
-            yield(word, yearList[counter]),( freqList[counter], numOfYears, int(NUM_YEARS))        
+            yield(word, yearList[counter]),(freqList[counter], numOfYears, int(NUM_YEARS))        
 
     # Calculate TFIDF given the prev values
     def calcTfIdf (self, word_year, freq_nums):
@@ -82,8 +70,6 @@ class MRCalculateTFIDF(MRJob):
         numOfYears = freq_nums[2]
         # Calculate the TF-IDF 
         tfIdf = freq * log10(numOfYears/wordYearCount)
-        # yield(word, year),(freq, numOfYears, numOfYears)
-        # self.finalResult[f"{word}"] += f"{year},{tfIdf}"
         concatenated = year + "," + str(tfIdf) + ";"
         yield (word), (concatenated)
 
@@ -93,6 +79,7 @@ class MRCalculateTFIDF(MRJob):
             combinedValue +=  value
         combinedValue = combinedValue[:-1]
         yield (word, combinedValue)
+
 
     def steps(self):
         return [
