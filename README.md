@@ -152,3 +152,20 @@ python3 wordcount.py -r hadoop hdfs://localhost:9000/user/comp9313/input/mydata.
 
 ## Submitting stuff:
 cp z5207998_proj1.zip ~/../mnt/c/Users/admin/Desktop/comp9313/
+
+## Setup SPARK / SCALA
+Link: https://downloads.apache.org/spark/spark-3.3.0/ 
+(We will need to wget https://downloads.apache.org/spark/spark-3.3.0/spark-3.3.0-bin-hadoop3.tgz)
+Follow the guide here: https://kontext.tech/article/560/apache-spark-301-installation-on-linux-guide
+
+After the installation (and outside the scala shell); run example `run-example SparkPi 10` to see spark in action
+
+Create the basic scala app:
+https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html 
+
+## Run the spark app:
+
+- First build the app with `sbt package`, then run:
+```
+$SPARK_HOME/bin/spark-submit --class "SimpleApp" --master local[4] target/scala-2.12/simple-project_2.12-1.0.jar
+```
