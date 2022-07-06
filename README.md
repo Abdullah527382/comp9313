@@ -82,16 +82,13 @@ sudo apt install ssh
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 chmod 0600 ~/.ssh/authorized_keys
 ```
-
-### NOTE: You might need to set the DFS vars before starting the script:
+## SET THE ENV VARS (add in ~/.bashrc file):
 ```
-
-SET HDFS_NAMENODE_USER="root"
-SET HDFS_DATANODE_USER="root"
-SET HDFS_SECONDARYNAMENODE_USER="root"
-SET YARN_RESOURCEMANAGER_USER="root"
-SET YARN_NODEMANAGER_USER="root"
-
+export HDFS_NAMENODE_USER="root"
+export HDFS_DATANODE_USER="root"
+export HDFS_SECONDARYNAMENODE_USER="root"
+export YARN_RESOURCEMANAGER_USER="root"
+export YARN_NODEMANAGER_USER="root"
 ```
 
 `start-dfs.sh and stop-dfs.sh` will run and stop hdfs
@@ -124,15 +121,6 @@ Check out some commands by running:
 3. `hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.2.jar wordcount <input_file> <output_file>`
    - Will need to delete our output file first, run ` hdfs dfs -rm output/*` and then `hdfs dfs -rmdir output` OR `hdfs dfs -rm -r output`
 
-## SET THE ENV VARS:
-```
-export HDFS_NAMENODE_USER="root"
-export HDFS_DATANODE_USER="root"
-export HDFS_SECONDARYNAMENODE_USER="root"
-export YARN_RESOURCEMANAGER_USER="root"
-export YARN_NODEMANAGER_USER="root"
-```
-
 ### YARN:
 
 ## Using MRJob =:
@@ -164,6 +152,8 @@ Create the basic scala app:
 https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html 
 
 ## Run the spark app:
+
+Note: Followed this guide --> https://spark.apache.org/docs/latest/quick-start.html
 
 - First build the app with `sbt package`, then run:
 ```
