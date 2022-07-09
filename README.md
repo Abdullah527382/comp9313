@@ -82,7 +82,9 @@ sudo apt install ssh
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 chmod 0600 ~/.ssh/authorized_keys
 ```
+
 ## SET THE ENV VARS (add in ~/.bashrc file):
+
 ```
 export HDFS_NAMENODE_USER="root"
 export HDFS_DATANODE_USER="root"
@@ -125,37 +127,52 @@ Check out some commands by running:
 
 ## Using MRJob =:
 
-Commands which are helpful. 
+Commands which are helpful.
 Create a file e.g. called mydata.txt with a bunch of lines which contains words
-
 
 ```
 # Create a directory to contain input data
 hdfs dfs -mkdir hdfs://localhost:9000/user/comp9313/input
-# Move the local data file to the dfs 
+# Move the local data file to the dfs
 hdfs dfs -put mydata.txt hdfs://localhost:9000/user/comp9313/input/
 # Run the wordcount project on that input data with -r hadoop specified
 python3 wordcount.py -r hadoop hdfs://localhost:9000/user/comp9313/input/mydata.txt
 ```
 
 ## Submitting stuff:
+
 cp z5207998_proj1.zip ~/../mnt/c/Users/admin/Desktop/comp9313/
 
 ## Setup SPARK / SCALA
-Link: https://downloads.apache.org/spark/spark-3.3.0/ 
+
+Link: https://downloads.apache.org/spark/spark-3.3.0/
 (We will need to wget https://downloads.apache.org/spark/spark-3.3.0/spark-3.3.0-bin-hadoop3.tgz)
 Follow the guide here: https://kontext.tech/article/560/apache-spark-301-installation-on-linux-guide
 
 After the installation (and outside the scala shell); run example `run-example SparkPi 10` to see spark in action
 
-Create the basic scala app:
-https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html 
+## Get SBT (bild and package scala app)
+
+```
+sudo apt-get update
+sudo apt-get install apt-transport-https curl gnupg -yqq
+echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
+echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | sudo tee /etc/apt/sources.list.d/sbt_old.list
+curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | sudo -H gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/scalasbt-release.gpg --import
+sudo chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg
+sudo apt-get update
+sudo apt-get install sbt
+```
+
+Source:
+https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html
 
 ## Run the spark app:
 
 Note: Followed this guide --> https://spark.apache.org/docs/latest/quick-start.html
 
 - First build the app with `sbt package`, then run:
+
 ```
 $SPARK_HOME/bin/spark-submit --class "SimpleApp" --master local[4] target/scala-2.12/simple-project_2.12-1.0.jar
 ```

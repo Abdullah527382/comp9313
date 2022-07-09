@@ -1,0 +1,7 @@
+## LENOVO LAPTOP ##
+
+[info] welcome to sbt 1.6.2 (Private Build Java 11.0.15)
+[info] loading project definition from /home/abdullah/COMP9313/spark/project
+[info] loading settings for project spark from build.sbt ...
+[info] set current project to Simple Project (in build file:/home/abdullah/COMP9313/spark/)
+[success] Total time: 2 s, completed Jul 9, 2022, 8:14:58 PM
