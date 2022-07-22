@@ -178,3 +178,9 @@ Note: Followed this guide --> https://spark.apache.org/docs/latest/quick-start.h
 ```
 $SPARK_HOME/bin/spark-submit --class "SimpleApp" --master local[4] target/scala-2.12/simple-project_2.12-1.0.jar
 ```
+
+For our assignment, problem1:
+
+```
+spark-submit --class "Problem1" --master local[4] target/scala-2.12/problem-1_2.12-1.0.jar
+```
