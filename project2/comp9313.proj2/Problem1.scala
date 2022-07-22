@@ -1,29 +1,28 @@
 /* SimpleApp.scala */
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.SparkContext
+import org.apache.spark.SparkContext._
+import org.apache.spark.SparkConf
 
 object Problem1 {
   def main(args: Array[String]): Unit = {
 
     // Some file in the hdfs fs
-    val sampleFile = "spark-test/tiny-doc.txt"
-    val stopWordsFile = "spark-test/stopwords.txt"
+    val sampleFile = "project2/tiny-doc.txt"
+    val stopWordsFile = "project2/stopwords.txt"
 
-    // Initialize a spark session
-    val spark = SparkSession.builder.appName("Problem 1").getOrCreate()
+    // Create a new spark configuration and create a context out of that
+    val conf = new SparkConf().setAppName("Problem1").setMaster("local")
+    val sc = new SparkContext(conf)
 
-    // Read both files into a value array
-    val stopWords = spark.read.textFile(stopWordsFile).cache()
-    val sampleData = spark.read.textFile(sampleFile).cache()
+    // Read the file into values
+    val stopWords = sc.textFile(stopWordsFile)
+    val sampleData = sc.textFile(sampleFile)
 
-    // Filter out the sampleData from any stopwords e.g. to
-
-    val sampleData = sampleData.filter(line => {
-      line.contains(stopWords.filter(word => {
-        word.c
-      }))
-    })
-    val numBs = logData.filter(line => line.contains("b"))
-    println(s"Lines with a: $numAs, Lines with b: $numBs")
-    spark.stop()
+    // Store the stop words into an array
+    val stopWordsArray = stopWords.flatMap(_.split(" "))
+    stopWordsArray.foreach(word => println(word))
   }
+
+  // def removeStopWords () :
+
 }

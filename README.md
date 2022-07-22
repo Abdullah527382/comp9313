@@ -169,6 +169,8 @@ https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html
 
 ## Run the spark app:
 
+NOTE: Remember to first put your files in the HDFS file system in 'project2' dir
+e.g. `hdfs dfs -put tiny-doc.txt project2`
 Note: Followed this guide --> https://spark.apache.org/docs/latest/quick-start.html
 
 - First build the app with `sbt package`, then run:
