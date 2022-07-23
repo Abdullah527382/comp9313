@@ -46,13 +46,19 @@ object Problem1 {
     // Sort alphhabetically
     val res = ListMap(coo.toSeq.sortBy(-_._2): _*).take(3)
     // case class record(list: List[String], count: Int)
-    val sorted =
+    var sorted =
       res.toSeq.sortBy(_._1(0))
 
     // res.foreach(println)
-    sorted.foreach { case (key, value) =>
-      println(key(0) + "," + key(1) + "\t" + value)
+    sorted.map { case (key, value) =>
+      key(0) + "," + key(1) + "\t" + value
     }
+    val outputRDD = sc.parallelize(sorted.map { case (key, value) =>
+      key(0) + "," + key(1) + "\t" + value
+    })
+    outputRDD.saveAsTextFile(outputFolder)
+    // sorted.saveAsTextFile(outputFolder)
+
   }
 
   def filterStopWords(
