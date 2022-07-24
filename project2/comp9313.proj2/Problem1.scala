@@ -20,9 +20,10 @@ object Problem1 {
     val sc = new SparkContext(conf)
     var sampleData = sc
       .textFile(sampleFileAddr)
-    // Read the file into values
+    // Read the file into values, make sure all lower case and split on special chars
     val stopWords =
-      sc.textFile(stopWordsFileAddr).flatMap(line => line.split(" "))
+      sc.textFile(stopWordsFileAddr)
+        .flatMap(line => line.split(" "))
     val stopWordsBroadcast = sc.broadcast(stopWords.collect())
     var sampleBroadcast = sc.broadcast(sampleData.collect())
 
@@ -31,36 +32,41 @@ object Problem1 {
       filteredData = filterStopWords(sampleBroadcast, filteredData, word)
     })
 
+    // Remove all the dates from the file
     filteredData = removeDate(filteredData)
-    val tokens = filteredData.map(_.split(" ").toList)
 
-    val coo = tokens
+    // Convert our filtered data into a list, separate by identifier: space
+    val filteredDataList = filteredData.map(_.split(" ").toList)
+
+    // Count all the co-occurring frequencies and store into new value
+    val countCooFreq = filteredDataList
+      // Get all the combinations (by 2) of each value in list
       .flatMap(_.combinations(2))
+      // Map the value to count of 1
       .map((_, 1))
+      // Group by the word pair
       .groupBy(_._1)
+      // Map the key and value (list) by adding the counts together
       .map { case (key, list) => key -> list.map(_._2).reduce(_ + _) }
-    //   .toSeq
-    //   .sortWith((list: (List[String], Int)) => list._1(0) > list._1(1))
-    // // coo.foreach(println)
 
-    // Sort alphhabetically
-    val res = ListMap(coo.toSeq.sortBy(-_._2): _*).take(3)
-    // case class record(list: List[String], count: Int)
-    var sorted =
-      res.toSeq.sortBy(_._1(0))
+    // Sort first by the values count then alphabetically in decreasing order, and only take the first K
+    // -_._2, _._1(0)
+    val sorted =
+      countCooFreq.toArray
+        .sortBy { case (k, v) => (-v, k(0)) }
+        .take(K.toInt)
+    // var sorted =
+    //   res.toSeq.sortBy(_._1(0))
 
-    // res.foreach(println)
-    sorted.map { case (key, value) =>
-      key(0) + "," + key(1) + "\t" + value
-    }
+    // Map the output to be of desired format, into an RDD so we can output to dest folder
     val outputRDD = sc.parallelize(sorted.map { case (key, value) =>
       key(0) + "," + key(1) + "\t" + value
     })
     outputRDD.saveAsTextFile(outputFolder)
-    // sorted.saveAsTextFile(outputFolder)
-
   }
 
+  // Our helper functions which just clean the data
+  // Remove the stop words
   def filterStopWords(
       sampleBroadcast: Broadcast[Array[String]],
       filteredData: Array[String],
@@ -72,7 +78,10 @@ object Problem1 {
         var concatString: String = lineArray(0) + ","
         for (i <- 1 to lineArray.length - 1) {
           val lineWord = lineArray(i)
-          concatString += " " + lineWord
+          // Ignore words that aren't from lineWord => a, lineword <= z
+          if (lineWord.charAt(0) <= 'z' && lineWord.charAt(0) >= 'a') {
+            concatString += " " + lineWord
+          }
         }
         concatString
       })
@@ -98,7 +107,5 @@ object Problem1 {
       lineArray(1)
     })
   }
-
-  //
 
 }

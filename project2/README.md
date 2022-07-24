@@ -38,11 +38,15 @@ as Problem1. Store output as a txt file on disk.
 #### Run the program with:
 
 ```
-spark-submit --class "Problem1" --master local[4] target/scala-2.12/problem-1_2.12-1.0.jar
+spark-submit --class "Problem1" --master local[4] target/scala-2.12/problem-1_2.12-1.0.jar 3 "project2/stopwords.txt" "project2/tiny-doc.txt" "project2/output"
 ```
 
 Check results here:
 hdfs dfs -ls ./project2
+hdfs dfs -cat project2/output/part-00000
+
+Delete the generated output folder:
+`hdfs dfs -rmr -r project2/output`
 
 ### Problem 2:
 
